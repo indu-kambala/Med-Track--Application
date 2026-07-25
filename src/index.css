@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-surface: #f8fafc;
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-subtle: #e5e7eb;
+    --border-strong: #d1d5db;
+    --bg-hover: #f3f4f6;
+  }
+
+  .dark {
+    --bg-surface: #111827; /* gray-900 */
+    --bg-card: #1f2937; /* gray-800 */
+    --text-primary: #f9fafb; /* gray-50 */
+    --text-secondary: #9ca3af; /* gray-400 */
+    --border-subtle: #374151; /* gray-700 */
+    --border-strong: #4b5563; /* gray-600 */
+    --bg-hover: #374151; /* gray-700 */
+  }
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+}
+body {
+  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Smooth spin for loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 0.75s linear infinite;
+}
+
+/* Subtle float animation for left panel blobs */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Fade-in for auth cards */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-card-animate {
+  animation: fadeSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* test frontend */
+
+
+/* Custom Cursor */
+.custom-cursor-dot,
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.custom-cursor-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #2563eb;
+}
+
+.custom-cursor-ring {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #2563eb;
+  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+}
+
+.custom-cursor-ring.cursor-hover {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.custom-cursor-ring.cursor-click {
+  width: 24px;
+  height: 24px;
+}
+
+@media (pointer: fine) {
+  body.custom-cursor-enabled,
+  body.custom-cursor-enabled * {
+    cursor: auto;
+  }
+  body.custom-cursor-enabled a,
+  body.custom-cursor-enabled button,
+  body.custom-cursor-enabled [role='button'],
+  body.custom-cursor-enabled .cursor-pointer {
+    cursor: none !important;
+  }
+  body.custom-cursor-enabled input,
+  body.custom-cursor-enabled select,
+  body.custom-cursor-enabled textarea {
+    cursor: text !important;
+  }
+}
+
+@media (pointer: coarse) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none;
+  }
+}

@@ -1,0 +1,178 @@
+// src/routes/AppRoutes.jsx
+import React from "react";
+import { useAuth } from "../context/AuthContext";
+
+// Page Imports
+import LandingPage from "../pages/LandingPage";
+import Blog from "../pages/Blog";
+import BlogPost from "../pages/BlogPost";
+import CareersPage from "../pages/CareersPage";
+import JobApplicationPage from "../pages/JobApplicationPage";
+import CertificateGeneratorPage from "../pages/CertificateGeneratorPage";
+import LoginPage from "../pages/auth/LoginPage";
+import RegisterPage from "../pages/auth/RegisterPage";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+import VerifyOtpPage from "../pages/auth/VerifyOtpPage";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+import Dashboard from "../pages/hospital/Dashboard";
+import AnalyticsDashboard from "../pages/hospital/AnalyticsDashboard";
+import EquipmentList from "../pages/hospital/EquipmentList";
+import MaintenanceSchedule from "../pages/hospital/MaintenanceSchedule";
+import TaskList from "../pages/technician/TaskList";
+import UpdateTask from "../pages/technician/UpdateTask";
+import OrdersList from "../pages/supplier/OrdersList";
+import OrderStatus from "../pages/supplier/OrderStatus";
+import AuthoritySecurityPage from "../pages/auth/AuthoritySecurityPage";
+import MfaSecurityPage from "../pages/auth/MfaSecurityPage";
+import EnterpriseSsoPage from "../pages/auth/EnterpriseSsoPage";
+import RbacSecurityPage from "../pages/auth/RbacSecurityPage";
+import ZeroTrustSecurityPage from "../pages/auth/ZeroTrustSecurityPage";
+import ComplianceSecurityPage from "../pages/auth/ComplianceSecurityPage";
+import ThreatDetectionSoarPage from "../pages/auth/ThreatDetectionSoarPage";
+import SecurityKeyVaultPage from "../pages/auth/SecurityKeyVaultPage";
+import SiemSecurityAnalyticsPage from "../pages/auth/SiemSecurityAnalyticsPage";
+
+// --- Connected Imports ---
+import AddEquipmentForm from "../pages/hospital/AddEquipmentForm";
+import EditEquipmentForm from "../pages/hospital/EditEquipmentForm";
+import ScheduleMaintenancePage from "../pages/hospital/ScheduleMaintenancePage";
+import RequestEquipmentPage from "../pages/hospital/RequestEquipmentPage";
+
+const UnauthorizedPage = ({ onNavigate, message }) => (
+  <div className="min-h-screen bg-slate-900 flex items-center justify-center font-sans text-white p-6">
+    <div className="bg-slate-800 rounded-[2rem] p-16 text-center border border-red-500/20 max-w-md shadow-2xl">
+      <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500 text-3xl">
+        ⚠️
+      </div>
+      <h2 className="text-2xl font-black mb-2">Access Denied</h2>
+      <p className="text-red-400 font-bold mb-6">
+        {message ||
+          "Your account role is not authorized to access this resource."}
+      </p>
+      <button
+        onClick={() => onNavigate("dashboard")}
+        className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-500/20"
+      >
+        Go to Dashboard
+      </button>
+    </div>
+  </div>
+);
+
+export default function AppRouter({ currentPage, onNavigate, pageData }) {
+  const { user } = useAuth();
+
+  const ProtectedRoute = (Component, props = {}, allowedRoles = []) => {
+    if (!user) return <LoginPage onNavigate={onNavigate} />;
+
+    if (
+      allowedRoles.length > 0 &&
+      !allowedRoles.includes(user.role?.toLowerCase())
+    ) {
+      return <UnauthorizedPage onNavigate={onNavigate} />;
+    }
+
+    return <Component onNavigate={onNavigate} {...props} />;
+  };
+
+  switch (currentPage) {
+    // --- Public Routes ---
+    case "landing":
+      return <LandingPage onNavigate={onNavigate} />;
+    case "blog":
+      return <Blog onNavigate={onNavigate} />;
+    case "blog-post":
+      return <BlogPost onNavigate={onNavigate} slug={pageData} />;
+    case "careers":
+      return <CareersPage onNavigate={onNavigate} />;
+    case "apply":
+      return <JobApplicationPage onNavigate={onNavigate} jobId={pageData} />;
+    case "certificate":
+      return <CertificateGeneratorPage />;
+    case "login":
+      return <LoginPage onNavigate={onNavigate} />;
+    case "register":
+      return <RegisterPage onNavigate={onNavigate} defaultRole={pageData} />;
+    case "forgot-password":
+      return <ForgotPasswordPage onNavigate={onNavigate} />;
+    case "verify-otp":
+      return <VerifyOtpPage onNavigate={onNavigate} />;
+    case "reset-password":
+      return <ResetPasswordPage onNavigate={onNavigate} />;
+
+    // --- Protected Routes: Hospital Admin ---
+    case "dashboard":
+      return ProtectedRoute(Dashboard);
+    case "equipment":
+      return ProtectedRoute(EquipmentList);
+    case "add-equipment":
+      return ProtectedRoute(AddEquipmentForm, {}, ["hospital"]);
+    case "edit-equipment":
+      return ProtectedRoute(EditEquipmentForm, { equipmentId: pageData }, ["hospital"]);
+    case "schedule-maintenance":
+      return ProtectedRoute(ScheduleMaintenancePage, {}, ["hospital"]);
+    case "request-equipment":
+      return ProtectedRoute(RequestEquipmentPage, {}, ["hospital"]);
+    case "maintenance":
+      return ProtectedRoute(MaintenanceSchedule);
+    case "analytics":
+      return ProtectedRoute(AnalyticsDashboard, {}, ["hospital"]);
+
+    // --- Protected Routes: Technician ---
+    case "tasks":
+      return ProtectedRoute(TaskList);
+    case "update-task":
+      return ProtectedRoute(UpdateTask, { task: pageData });
+    case "updatetask":
+      return ProtectedRoute(UpdateTask, { task: pageData });
+
+    // --- Protected Routes: Supplier ---
+    case "orders":
+      return ProtectedRoute(OrdersList);
+    case "orderstatus":
+      return ProtectedRoute(OrderStatus, { order: pageData });
+
+    // --- Protected Routes: Security & Authority ---
+    // Authority version management, RBAC role/permission matrix, and SSO provider
+    // configuration are Hospital admin-only consoles. 2FA/device management is
+    // self-service and stays open to any authenticated role.
+    case "authority-security":
+    case "authority":
+      return ProtectedRoute(AuthoritySecurityPage, {}, ["hospital"]);
+    case "mfa-security":
+    case "mfa":
+      return ProtectedRoute(MfaSecurityPage);
+    case "sso-security":
+    case "sso":
+      return ProtectedRoute(EnterpriseSsoPage, {}, ["hospital"]);
+    case "rbac-security":
+    case "rbac":
+      return ProtectedRoute(RbacSecurityPage);
+    case "zerotrust-security":
+    case "zerotrust":
+      return ProtectedRoute(ZeroTrustSecurityPage);
+    case "compliance-security":
+    case "compliance":
+      return ProtectedRoute(ComplianceSecurityPage);
+    case "threat-detection":
+    case "soar-security":
+    case "soar":
+      return ProtectedRoute(ThreatDetectionSoarPage);
+    case "keyvault-security":
+    case "keyvault":
+    case "keyvault-security":
+      return ProtectedRoute(KeyVaultSecurityPage);
+    case "dlp":
+    case "dlp-privacy":
+    case "privacy-guard":
+      return ProtectedRoute(DlpPrivacyGuardPage);
+    case "passkeys":
+    case "passwordless":
+    case "webauthn":
+      return ProtectedRoute(PasskeyPasswordlessPage);
+
+    // --- Fallback ---
+    default:
+      return <LandingPage onNavigate={onNavigate} />;
+  }
+}
