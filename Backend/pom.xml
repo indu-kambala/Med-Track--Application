@@ -131,18 +131,18 @@
         <dependency>
             <groupId>com.bucket4j</groupId>
             <artifactId>bucket4j_jdk17-core</artifactId>
-            <version>8.20.0</version>
+            <version>8.21.0</version>
         </dependency>
         <!-- iText PDF generation -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
-            <version>9.7.1</version>
+            <version>9.8.0</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
-            <version>9.7.1</version>
+            <version>9.8.0</version>
         </dependency>
 
 
